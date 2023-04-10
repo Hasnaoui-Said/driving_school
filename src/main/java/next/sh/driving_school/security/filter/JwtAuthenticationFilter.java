@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -50,7 +51,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // Crypto algo symmetric with une secret
             Algorithm algorithm = Algorithm.HMAC256(JwtUtil.SECRET);
 
-            List<String> authority = user.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
+            List<String> authority = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
             String jwtSuccessToken = JWT.create()
                     .withSubject(user.getUsername())
                     .withExpiresAt(new Date(System.currentTimeMillis() + JwtUtil.EXPIRED_JETON))

@@ -7,6 +7,7 @@ import next.sh.driving_school.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()// Exception handler
                 .exceptionHandling().accessDeniedHandler(new AccessDeniedExceptionHandler())
                 .and().authorizeRequests()
-//                .antMatchers(HttpMethod.POST, "/**/users/").permitAll()
+                .antMatchers(HttpMethod.GET, "/**/refresh/").permitAll()
                 .antMatchers("/**/eleve/**").permitAll()
                 .anyRequest().authenticated()
 
@@ -75,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:9090"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200"));
         corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin",
                 "Content-Type", "Accept", "Authorization", "Origin,Accept", "X-Requested-With",
                 "Access-Control-Request-Method", "Access-Control-Request-Headers"));

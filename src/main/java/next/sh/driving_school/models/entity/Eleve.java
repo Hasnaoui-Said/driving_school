@@ -18,7 +18,7 @@ public class Eleve extends User implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date endDate;
     @OneToMany(mappedBy = "eleve")
-    private List<Payiement> payiements;
+    private List<Payment> payments;
 
     public Date getStartDate() {
         return startDate;
@@ -37,11 +37,11 @@ public class Eleve extends User implements Serializable {
     }
 
     @JsonIgnore
-    public List<Payiement> getPayiements() {
-        return payiements;
+    public List<Payment> getPayments() {
+        return payments;
     }
 
-    public void setPayiements(List<Payiement> payiements) {
-        this.payiements = payiements;
+    public void setPayments(List<Payment> payments) {
+        payments = payments;
     }
 }
