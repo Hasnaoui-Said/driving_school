@@ -12,14 +12,14 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "Payiement")
-public class Payiement {
+@Table(name = "payment")
+public class Payment {
     @Id
     UUID uuid;
     @NotEmpty @NotNull @Size(min = 500, max = 5000, message = "Total pay must between 500 and 5000")
     String totalPay;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private Date payiementDate;
+    private Date paymentDate;
     @ManyToOne
     Eleve eleve;
 
@@ -39,12 +39,12 @@ public class Payiement {
         this.totalPay = totalPay;
     }
 
-    public Date getPayiementDate() {
-        return payiementDate;
+    public Date getPaymentDate() {
+        return paymentDate;
     }
 
-    public void setPayiementDate(Date payiementDate) {
-        this.payiementDate = payiementDate;
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     @JsonIgnore

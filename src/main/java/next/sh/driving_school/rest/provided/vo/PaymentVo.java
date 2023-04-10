@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PayiementVo {
+public class PaymentVo {
     UUID uuid;
     @NotEmpty @NotNull @Size(min = 500, max = 5000, message = "Total pay must between 500 and 5000")
     String totalPay;
