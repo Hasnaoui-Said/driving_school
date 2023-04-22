@@ -2,16 +2,24 @@ package next.sh.driving_school.rest.provided.facade;
 
 import next.sh.driving_school.exception.BadRequestException;
 import next.sh.driving_school.models.domain.ResponseObject;
+import next.sh.driving_school.models.entity.Eleve;
 import next.sh.driving_school.models.entity.User;
 import next.sh.driving_school.rest.converter.UserConverter;
+import next.sh.driving_school.rest.provided.vo.EleveVo;
 import next.sh.driving_school.rest.provided.vo.UserVo;
 import next.sh.driving_school.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -23,15 +31,42 @@ public class UsersRest {
     @Autowired
     UserDetailsServiceImpl usersService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/")
+    @RequestMapping(method = RequestMethod.GET, value = "/all")
     public ResponseEntity<ResponseObject<?>> findAll() {
         List<User> all = this.usersService.findAll();
         ResponseObject<List<UserVo>> responseObject = new ResponseObject<>(true,
                 "Find all!!", this.userConverter.toVos(all));
         return new ResponseEntity<>(responseObject, HttpStatus.OK);
-
     }
-
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    public ResponseEntity<ResponseObject<?>> findAll(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+    @RequestParam(name = "size", defaultValue = "2") int size) {
+        Page<User> all = this.usersService.findAll(PageRequest.of(page, size));
+        ResponseObject<Page<UserVo>> responseObject = new ResponseObject<>(true,
+                "Find all!!", this.userConverter.toVos(all));
+        return new ResponseEntity<>(responseObject, HttpStatus.OK);
+    }
+    @RequestMapping(method = RequestMethod.POST, value = "/")
+    public ResponseEntity<ResponseObject<?>> save(@RequestBody @Valid UserVo user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+            ResponseObject<Map<String, String>> responseObject = new ResponseObject<>(false,
+                    "User not valid!!", errors);
+            return new ResponseEntity<>(responseObject, HttpStatus.BAD_REQUEST);
+        }
+        try {
+            User userSave = usersService.save(this.userConverter.toBean(user));
+            ResponseObject<UserVo> responseObject = new ResponseObject<>(true,
+                    "User saved successfully", this.userConverter.toVo(userSave));
+            return new ResponseEntity<>(responseObject, HttpStatus.CREATED);
+        } catch (BadRequestException e) {
+            ResponseObject<UserVo> responseObject = new ResponseObject<>(false,
+                    e.getMessage(), user);
+            return new ResponseEntity<>(responseObject, HttpStatus.BAD_REQUEST);
+        }
+    }
     @RequestMapping(method = RequestMethod.GET, value = "/uuid/{uuid}")
     public ResponseEntity<ResponseObject<?>> findByUuid(@PathVariable String uuid) {
         try {

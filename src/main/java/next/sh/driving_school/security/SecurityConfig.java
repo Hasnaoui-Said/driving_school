@@ -46,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(new AccessDeniedExceptionHandler())
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/**/refresh/").permitAll()
-                .antMatchers("/**/eleve/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/**/users/").permitAll()
+//                .antMatchers("/**/eleve/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()

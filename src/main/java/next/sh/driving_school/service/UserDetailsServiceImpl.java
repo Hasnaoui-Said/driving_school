@@ -5,6 +5,8 @@ import next.sh.driving_school.exception.BadRequestException;
 import next.sh.driving_school.models.entity.User;
 import next.sh.driving_school.util.UtilString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,13 +30,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User appUser = this.findByUsername(username).orElseThrow(()->{
             System.out.println(String.format("User with username %s was not found", username));
-            throw new UsernameNotFoundException("Bad credentials");
+            return new UsernameNotFoundException("Bad credentials");
         });
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("USER"));
-        org.springframework.security.core.userdetails.User userDetails =
-                new org.springframework.security.core.userdetails.User(appUser.getEmail(), appUser.getPassword(), authorities);
-        return userDetails;
+        return new org.springframework.security.core.userdetails.User(appUser.getEmail(), appUser.getPassword(), authorities);
     }
 
     public User save(User user) {
@@ -51,6 +51,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public List<User> findAll() {
         return this.userDao.findAll();
+    }
+    public Page<User> findAll(PageRequest page) {
+        return this.userDao.findAll(page);
     }
 
     public User findByUuid(UUID uuid) {
